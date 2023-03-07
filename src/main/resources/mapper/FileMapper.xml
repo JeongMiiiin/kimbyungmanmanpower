@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="file">
+	<!-- 파일 정보 쌓기 -->
+	<insert id="insertFile" parameterType="HashMap" useGeneratedKeys="true" keyProperty="sn">
+		INSERT INTO kbm_file (name, origin_name, ext) VALUE (#{fileName},#{originFileName}, #{ext})
+	</insert>
+	<!-- 파일 정보 가지고 오기 -->
+	<select id="getFileName" parameterType="int" resultType="String">
+		SELECT name FROM kbm_file WHERE sn = #{fileSeq}
+	</select>
+	<select id="getFileOriginName" parameterType="int" resultType="String">
+		SELECT origin_name FROM kbm_file WHERE sn = #{fileSeq}
+	</select>
+	<!-- 파일 정보 가지고 오기 -->
+	<select id="getFileExt" parameterType="int" resultType="String">
+		SELECT ext FROM kbm_file WHERE sn = #{fileSeq}
+	</select>
+	<delete id="deleteFile" parameterType="int">
+		DELETE FROM kbm_file WHERE sn = #{fileSeq}
+	</delete>
+</mapper>

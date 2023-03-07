@@ -1,0 +1,47 @@
+/*
+Date : 08/05/2022
+Writer : JM
+E-mail : k3371548@gmail.com
+purpose : �궗�슜�옄�럹�씠吏� 媛쒖씤, 湲곗뾽/�떒泥� �럹�씠吏� 怨듯넻 �뫖�꽣 CSS 
+*/
+
+@charset "UTF-8";
+
+.footer_wrap{position: fixed; bottom: 0; left: 0; width: 100%; z-index: 50;}
+.footer_list{display: flex; align-items: center; padding-top: 14px; padding-bottom: 15px; font-size: 0; line-height: 0; box-shadow: rgb(0 0 0 / 35%) 0px 0px 15px; background-color: #fff;}
+.footer_list > li{width: 25%; text-align: center; font-size: 0; line-height: 0;}
+.footer_list.type_business > li{width: 50%;}
+.footer_list > li .footer_list_icon{width: 23px; height: 23px; display: inline-block; margin-bottom: 2px;
+background-image: url('../img/footer_home_icon.png'); background-repeat: no-repeat; background-size: cover; background-position: center center;}
+.footer_list > li:nth-child(2) .footer_list_icon{width: 24px; background-image: url('../img/footer_favorite_icon.png');}
+.footer_list > li:nth-child(3) .footer_list_icon{width: 27px; background-image: url('../img/footer_service_center_icon.png');}
+.footer_list > li:last-child .footer_list_icon{width: 19px; background-image: url('../img/footer_my_info_icon.png');}
+
+
+.footer_list > li .footer_list_text{width: 100%; display: block; font-size: 13px; font-size: 1.3rem; line-height: 19px; line-height: 1.9rem; font-weight: 400; letter-spacing: -0.02em; color: #bbb;}
+.footer_list > li.active .footer_list_icon{background-image: url('../img/footer_home_icon_active.png');}
+.footer_list > li:nth-child(2).active .footer_list_icon{background-image: url('../img/footer_favorite_icon_active.png');}
+.footer_list > li:nth-child(3).active .footer_list_icon{background-image: url('../img/footer_service_center_icon_active.png');}
+.footer_list > li:last-child.active .footer_list_icon{background-image: url('../img/footer_my_info_icon_active.png');}
+.footer_list > li.active .footer_list_text{font-weight: 600; color: #00539C;}
+
+.footer_pc_wrap{display: none;}
+
+@media all and (min-width: 992px){
+	.footer_wrap{display: none;}
+	.footer_pc_wrap{display: block; background-color: #F9F9F9; padding-top: 32px; padding-bottom: 27px;}
+	.footer_pc_con .img_box{width: 116px;}
+	.footer_pc_con .contents_box{width: calc(100% - 116px); padding-left: 47px;}
+	.footer_pc_list_con{font-size: 0; line-height: 0;}
+	.footer_pc_list_con > li{display: inline-block; position: relative; padding-right: 20px;}
+	.footer_pc_list_con > li:last-child{padding-right: 0;}
+	.footer_pc_list_con > li::after{content: ""; position: absolute; top: 5px; right: 9px; height: calc(100% - 11px); border-right: 2px solid #000;}
+	.footer_pc_list_con > li:last-child::after{content: none;}
+	.footer_pc_list_con > li > a{font-size: 17px; font-size: 1.7rem; line-height: 23px; line-height: 2.3rem; font-weight: 700; letter-spacing: -0.0em; color: #000;}
+	.footer_pc_info_con{font-size: 0; line-height: 0;}
+	.footer_pc_info_con > li{display: inline-block; padding-right: 11px;}
+	.footer_pc_info_con > li:last-child{padding-right: 0;}
+	.footer_pc_info_con > li > span{font-size: 15px; font-size: 1.5rem; line-height: 21px; line-height: 2.1rem; font-weight: 400; letter-spacing: -0.0em; color: #191919;}
+	.footer_pc_copyright_con{font-size: 13px; font-size: 1.3rem; line-height: 19px; line-height: 1.9rem; font-weight: 400; letter-spacing: -0.0em; color: #191919;}
+}
+

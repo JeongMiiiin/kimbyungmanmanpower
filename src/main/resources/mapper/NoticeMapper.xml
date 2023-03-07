@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice">
+	<sql id="whereParam">
+		<if test="searchTitle != null and searchTitle != ''">
+			 <![CDATA[ 
+			 AND 
+				gb.title like concat('%',#{searchTitle},'%') 
+			 ]]> 
+		</if>
+		<if test="searchStartDate != null and searchStartDate != ''">
+			<![CDATA[ 
+			 AND 
+				gb.create_date >= #{searchStartDate} 
+			 ]]> 
+		</if>
+		<if test="searchEndDate != null and searchEndDate != ''">
+			<![CDATA[ 
+			 AND 
+				gb.create_date <= #{searchEndDate} 
+			 ]]> 
+		</if>
+	</sql>
+	
+	<select id="selectListData" parameterType="NoticeDto" resultMap="CommonDto.NoticeMap">
+		SELECT gb.sn, gb.title, gb.is_notice, gb.hit, DATE_FORMAT(gb.create_date, '%Y.%m.%d') as create_date_str, gb.contents, gb.file_seq FROM kbm_notice gb WHERE gb.delete_date IS NULL
+		ORDER BY gb.sn DESC, gb.create_date DESC
+		<![CDATA[			
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>	
+	</select>
+	
+	<select id="selectTotalCnt" resultType="int">
+		SELECT COUNT(*) FROM kbm_notice WHERE delete_date IS NULL
+	</select>
+	
+	<select id="selectAdmListData" parameterType="NoticeDto" resultMap="CommonDto.NoticeMap">
+		SELECT gb.sn, gb.title, gb.is_notice, gb.hit, DATE_FORMAT(gb.create_date, '%Y-%m-%d') as create_date_str FROM kbm_notice gb WHERE gb.delete_date IS NULL <include refid="whereParam"/>
+		ORDER BY gb.sn DESC, gb.create_date DESC
+		<![CDATA[			
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>	
+	</select>
+	
+	<select id="selectAdmTotalCnt" parameterType="NoticeDto" resultType="int">
+		SELECT COUNT(*) FROM kbm_notice gb WHERE delete_date IS NULL <include refid="whereParam"/>
+	</select>
+	
+	<insert id="insertAdmData" parameterType="NoticeDto">
+		INSERT INTO kbm_notice (title, is_notice, contents, file_seq) VALUE (#{title}, #{isNotice}, #{contents}, #{imgFileSeq})
+	</insert>
+	
+	<select id="selectAdmViewData" parameterType="int" resultMap="CommonDto.NoticeMap">
+		SELECT gb.sn, gb.title, gb.is_notice, gb.contents FROM kbm_notice gb WHERE delete_date IS NULL AND sn = #{sn}
+	</select>
+	
+	<update id="updateAdmData" parameterType="NoticeDto">
+		UPDATE kbm_notice SET
+		title = #{title},
+		is_notice = #{isNotice},
+		contents = #{contents},
+		file_seq = #{imgFileSeq},
+		update_date = NOW()
+		WHERE sn = #{sn}
+	</update>
+	
+	<update id="deleteAdmData" parameterType="int">
+		UPDATE kbm_notice SET delete_date = NOW() WHERE sn = #{sn}
+	</update>
+	
+</mapper>

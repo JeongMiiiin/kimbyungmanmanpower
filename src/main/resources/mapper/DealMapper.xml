@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="deal">
+	<sql id="whereParam">
+		<if test="searchWorkTitle != null and searchWorkTitle != ''">
+			 <![CDATA[ 
+			 AND 
+				gb3.title like concat('%',#{searchWorkTitle},'%') 
+			 ]]> 
+		</if>
+		<if test="searchBuyerName != null and searchBuyerName != ''">
+			 <![CDATA[ 
+			 AND 
+				gb1.name like concat('%',#{searchBuyerName},'%') 
+			 ]]> 
+		</if>
+		<if test="searchRecipientName != null and searchRecipientName != ''">
+			 <![CDATA[ 
+			 AND 
+				gb2.name like concat('%',#{searchRecipientName},'%') 
+			 ]]> 
+		</if>
+		<if test="searchStatus != null and searchStatus != '' and searchStatus != -1">
+			 AND gb.status = #{searchStatus} 
+		</if>
+	</sql>
+
+	<select id="selectAdmListData" parameterType="DealDto" resultMap="CommonDto.DealMap">
+		SELECT gb.*, DATE_FORMAT(gb.create_date, '%Y-%m-%d') AS create_date_str, gb1.name AS member_name, gb2.name AS recipient_name, gb3.title AS work_title FROM kbm_deal gb LEFT JOIN kbm_member gb1 ON gb.member_sn = gb1.sn LEFT JOIN kbm_member gb2 ON gb.recipient_sn = gb2.sn LEFT JOIN kbm_work gb3 ON gb.work_sn = gb3.sn WHERE 1=1 <include refid="whereParam"/>
+	</select>
+	
+	<select id="selectAdmTotalCnt" parameterType="DealDto" resultType="int">
+		SELECT COUNT(*) FROM kbm_deal WHERE 1=1 <include refid="whereParam"/>
+	</select>
+
+	<select id="selectListData" parameterType="DealDto" resultMap="CommonDto.DealMap">
+		SELECT sn, member_sn, work_sn, status, DATE_FORMAT(create_date, '%Y-%m-%d') AS create_date_str FROM kbm_deal WHERE member_sn = #{memberSn}
+	</select>
+	<insert id="insertData" parameterType="HashMap">
+		INSERT INTO kbm_deal (member_sn, recipient_sn, work_sn, payment, imp_uid, merchant_uid) VALUE (#{memberSn}, #{recipientSn}, #{workSn}, #{payment}, #{impUid}, #{merchantUid})
+	</insert>
+	<select id="checkDuplicate" parameterType="HashMap" resultType="int">
+		SELECT COUNT(*) FROM kbm_deal WHERE work_sn = #{workSn} AND member_sn = #{memberSn}
+	</select>
+	<select id="selectDealData" parameterType="HashMap" resultMap="CommonDto.DealMap">
+		SELECT sn, status, member_sn, recipient_sn, payment, work_sn, imp_uid, merchant_uid, DATE_FORMAT(create_date, '%Y-%m-%d') AS create_date_str, DATE_FORMAT(payment_date, '%Y-%m-%d') AS payment_date_str
+		FROM kbm_deal WHERE work_sn = #{workSn} AND recipient_sn = #{recipientSn} 
+	</select>
+	<update id="updateData" parameterType="HashMap">
+		UPDATE kbm_deal SET status = #{status}
+		<if test="status != null and status == 1">
+			,payment_date = NOW() 
+		</if>
+		<if test="status != null and status == 0">
+			,payment_date = NULL
+			,delete_date = NULL
+		</if>
+		<if test="status != null and status == 2">
+			,payment_date = NULL
+			,delete_date = NOW()
+		</if>
+		WHERE work_sn = #{workSn} AND recipient_sn = #{recipientSn}
+	</update>
+</mapper>

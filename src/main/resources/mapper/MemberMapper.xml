@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+
+	<sql id="whereParam">
+		<if test="searchPhoneNum != null and searchPhoneNum != ''">
+			 <![CDATA[ 
+			 AND 
+				CONCAT(gb.phone0,gb.phone1,gb.phone2) like CONCAT('%',#{searchPhoneNum},'%') 
+			 ]]> 
+		</if>
+		<if test="searchName != null and searchName != ''">
+			 <![CDATA[ 
+			 AND 
+				gb.name like CONCAT('%',#{searchName},'%') 
+			 ]]> 
+		</if>
+		<if test="searchMemApprove != null and searchMemApprove != -2">
+			 AND gb.is_approved = #{searchMemApprove} 
+		</if>
+	</sql>
+	
+	<select id="idCheck" parameterType="HashMap" resultType="int">
+		SELECT COUNT(*) FROM kbm_member WHERE CONCAT(phone0,phone1,phone2) = #{phoneNum} AND delete_date IS NULL
+	</select>
+
+	<!-- 사용자 로그인 -->
+	<select id="loginCheck" parameterType="HashMap" resultMap="CommonDto.MemberMap">
+		SELECT *, DATE_FORMAT(create_date, '%Y-%m-%d') AS create_date_str FROM kbm_member WHERE CONCAT(phone0,phone1,phone2) = #{phoneNum} AND password = #{userPw} AND delete_date IS NULL
+		<if test="category != null and category != ''">
+			 <![CDATA[ 
+			 AND category = #{category}
+			 ]]> 
+		</if>
+		<if test="category == null">
+			 AND category != 1
+		</if>
+		LIMIT 1
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="insertData" parameterType="MemberDto" useGeneratedKeys="true" keyProperty="sn">
+		INSERT INTO kbm_member
+		(name, password, phone0, phone1, phone2, category, email0, email1, nationality, sex, birth, zip_code, address0, address1
+		<if test="etcFileSeq != null and etcFileSeq != ''">
+			,etc_file_seq
+		</if>
+		<if test="bloodPressure != null and bloodPressure != ''">
+			,blood_pressure
+		</if>
+		<if test="carExist != null and carExist != ''">
+			,car_exist
+		</if>
+		<if test="signFileSeq != null and signFileSeq != ''">
+			,sign_file_seq
+		</if>
+		<if test="simpleAdvantages != null and simpleAdvantages != ''">
+			,simple_advantages
+		</if>
+		<if test="permissionFileSeq != null and permissionFileSeq != ''">
+			,permission_file_seq
+		</if>
+		<if test="healthCertificateFileSeq != null and healthCertificateFileSeq != ''">
+			,health_certificate_file_seq
+		</if>
+		<if test="bankName != null and bankName != ''">
+			,bank_name
+		</if>
+		<if test="bankNum != null and bankNum != ''">
+			,bank_num
+		</if>
+		<if test="businessNum != null and businessNum != ''">
+			,business_num
+		</if>
+		<if test="managerName != null and managerName != ''">
+			,manager_name
+		</if>
+		<if test="representativeName != null and representativeName != ''">
+			,representative_name
+		</if>
+		<if test="tokenId != null and tokenId != ''">
+			,token_id
+		</if>
+		<if test="category != null and category != 1">
+			,is_approved
+		</if>
+		) VALUE
+		(#{name}, #{password}, #{phone0}, #{phone1}, #{phone2}, #{category}, #{email0}, #{email1}, #{nationality}, #{sex}, #{birthStr}, #{zipCode}, #{address0}, #{address1}
+		<if test="etcFileSeq != null and etcFileSeq != ''">
+			,#{etcFileSeq}
+		</if>
+		<if test="bloodPressure != null and bloodPressure != ''">
+			,#{bloodPressure}
+		</if>
+		<if test="carExist != null and carExist != ''">
+			,#{carExist}
+		</if>
+		<if test="signFileSeq != null and signFileSeq != ''">
+			,#{signFileSeq}
+		</if>
+		<if test="simpleAdvantages != null and simpleAdvantages != ''">
+			,#{simpleAdvantages}
+		</if>
+		<if test="permissionFileSeq != null and permissionFileSeq != ''">
+			,#{permissionFileSeq}
+		</if>
+		<if test="healthCertificateFileSeq != null and healthCertificateFileSeq != ''">
+			,#{healthCertificateFileSeq}
+		</if>
+		<if test="bankName != null and bankName != ''">
+			,#{bankName}
+		</if>
+		<if test="bankNum != null and bankNum != ''">
+			,#{bankNum}
+		</if>
+		<if test="businessNum != null and businessNum != ''">
+			,#{businessNum}
+		</if>
+		<if test="managerName != null and managerName != ''">
+			,#{managerName}
+		</if>
+		<if test="representativeName != null and representativeName != ''">
+			,#{representativeName}
+		</if>
+		<if test="tokenId != null and tokenId != ''">
+			,#{tokenId}
+		</if>
+		<if test="category != null and category != 1">
+			,1
+		</if>
+		)
+	</insert>
+	
+	<select id="signUpLogin" parameterType="int" resultMap="CommonDto.MemberMap">
+		SELECT *, DATE_FORMAT(create_date, '%Y-%m-%d') AS create_date_str FROM kbm_member WHERE sn = #{userSn} AND delete_date IS NULL
+	</select>
+	
+	<update id="updateSignUpNoticeAgree" parameterType="int">
+		UPDATE kbm_member SET notice_agree = 1 WHERE sn = #{userSn}
+	</update>
+	
+	
+	<select id="checkFindPassword" parameterType="HashMap" resultType="int">
+		SELECT COUNT(*) FROM kbm_member WHERE name = #{userName} AND CONCAT(phone0,phone1,phone2) = ${phoneNum} AND delete_date IS NULL
+	</select>
+	
+	<update id="updateTempPassword" parameterType="HashMap">
+		UPDATE kbm_member SET password = #{tempPw} WHERE name = #{userName} AND CONCAT(phone0,phone1,phone2) = #{phoneNum} AND delete_date IS NULL 
+	</update>
+	
+	<select id="checkPhoneNum" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM kbm_member WHERE CONCAT(phone0,phone1,phone2) = ${phoneNum} AND delete_date IS NULL
+	</select>
+	
+	<!-- 인증번호 갱신 -->
+	<insert id="updateCertificationCode">
+		INSERT INTO kbm_certification_code (phone_num, certification_code) VALUE (#{phoneNum}, #{certificationCode})
+	</insert>
+	
+	<select id="checkCertificationCode" parameterType="HashMap" resultType="String">
+		SELECT certification_code FROM kbm_certification_code WHERE phone_num = #{phoneNum} ORDER BY create_date DESC LIMIT 1
+	</select>
+	
+	<!-- 관리자 로그인 -->
+	<select id="loginAdmCheck" parameterType="HashMap" resultType="int">
+		SELECT COUNT(*) FROM kbm_member WHERE id = #{userId} AND password = #{userPw} AND delete_date IS NULL LIMIT 1
+	</select>
+	
+	<select id="selectAdmListData" parameterType="MemberDto" resultMap="CommonDto.MemberMap">
+		SELECT gb.*, DATE_FORMAT(gb.create_date, '%Y-%m-%d') AS create_date_str FROM kbm_member gb WHERE gb.delete_date IS NULL AND gb.category != 0 <include refid="whereParam"/>
+	</select>
+	
+	<select id="selectAdmTotalCnt" parameterType="MemberDto" resultType="int">
+		SELECT COUNT(*) FROM kbm_member gb WHERE gb.delete_date IS NULL AND gb.category != 0 <include refid="whereParam"/>
+	</select>
+	
+	<select id="selectAdmViewData" parameterType="int" resultMap="CommonDto.MemberMap">
+		SELECT gb.*, DATE_FORMAT(gb.birth, '%Y-%m-%d') AS birth_date_str FROM kbm_member gb WHERE gb.sn = ${memberSn}
+	</select>
+	
+	<update id="updateAdmData" parameterType="MemberDto">
+		UPDATE kbm_member SET
+		name = #{name},
+		phone0 = #{phone0},
+		phone1 = #{phone1},
+		phone2 = #{phone2},
+		email0 = #{email0},
+		email1 = #{email1},
+		nationality = #{nationality},
+		sex = #{sex},
+		zip_code = #{zipCode},
+		address0 = #{address0},
+		address1 = #{address1},
+		birth = #{birthStr}
+		<if test="representativeName != null and representativeName != ''">
+			,representative_name = #{representativeName}
+		</if>
+		<if test="managerName != null and managerName != ''">
+			,manager_name = #{managerName}
+		</if>
+		<if test="bloodPressure != null and bloodPressure != ''">
+			,blood_pressure = #{bloodPressure}
+		</if>
+		<if test="carExist != null and carExist != ''">
+			,car_exist = #{carExist}
+		</if>
+		<if test="bankName != null and bankName != ''">
+			,bank_name = #{bankName}
+		</if>
+		<if test="bankNum != null and bankNum != ''">
+			,bank_num = #{bankNum}
+		</if>
+		<if test="simpleAdvantages != null and simpleAdvantages != ''">
+			,simple_advantages = #{simpleAdvantages}
+		</if>
+		WHERE sn = #{sn}
+	</update>
+	
+	<update id="deleteAdmData" parameterType="int">
+		UPDATE kbm_member SET
+		delete_date = NOW()
+		WHERE sn = #{memberSn}
+	</update>
+	
+	<select id="getMyInfo" parameterType="int" resultMap="CommonDto.MemberMap">
+		SELECT sn, name, phone0, phone1, phone2, bank_name, bank_num, etc_file_seq, permission_file_seq, health_certificate_file_seq, complete_file_seq, notice_agree, business_num, representative_name FROM kbm_member WHERE sn = #{memberSn}
+	</select>
+	
+	<update id="updateMyInfo" parameterType="MemberDto">
+		UPDATE kbm_member SET
+		name = #{name},
+		phone0 = #{phone0},
+		phone1 = #{phone1},
+		phone2 = #{phone2},
+		notice_agree = #{noticeAgree}
+		<if test="etcFileSeq != null and etcFileSeq != ''">
+			,etc_file_seq = #{etcFileSeq}
+		</if>
+		<if test="signFileSeq != null and signFileSeq != ''">
+			,sign_file_seq = #{signFileSeq}
+		</if>
+		<if test="permissionFileSeq != null and permissionFileSeq != ''">
+			,permission_file_seq = #{permissionFileSeq}
+		</if>
+		<if test="healthCertificateFileSeq != null and healthCertificateFileSeq != ''">
+			,health_certificate_file_seq = #{healthCertificateFileSeq}
+		</if>
+		<if test="completeFileSeq != null and completeFileSeq != ''">
+			,complete_file_seq = #{completeFileSeq}
+		</if>
+		<if test="bankName != null and bankName != ''">
+			,bank_name = #{bankName}
+		</if>
+		<if test="bankNum != null and bankNum != ''">
+			,bank_num = #{bankNum}
+		</if>
+		<if test="businessNum != null and businessNum != ''">
+			,business_num = #{businessNum}
+		</if>
+		<if test="representativeName != null and representativeName != ''">
+			,representative_name = #{representativeName}
+		</if>
+		WHERE sn = #{sn}
+	</update>
+	
+	<update id="updateDeclaration" parameterType="HashMap" useGeneratedKeys="true" keyProperty="declaration_cnt">
+		UPDATE kbm_member SET declaration_cnt = declaration_cnt + 1 WHERE sn = #{recipientSn}
+	</update>
+	
+	<update id="updateApprove" parameterType="HashMap">
+		UPDATE kbm_member SET is_approved = #{isApproved} WHERE sn = #{memberSn}
+	</update>
+	
+	<update id="bannedMember" parameterType="HashMap">
+		UPDATE kbm_member SET banned_date = NOW() WHERE sn = #{recipientSn}
+	</update>
+	
+	<select id="checkToken" parameterType="String" resultMap="CommonDto.MemberMap">
+		SELECT *, DATE_FORMAT(create_date, '%Y-%m-%d') AS create_date_str FROM kbm_member WHERE token_id = #{tokenValue} AND delete_date IS NULL
+		ORDER BY token_date DESC
+		LIMIT 1
+	</select>
+	
+	<select id="getTokenValue" parameterType="int" resultType="HashMap">
+		SELECT token_id, notice_agree FROM kbm_member WHERE sn = #{memberSn}
+	</select>
+	
+	<update id="updateToken" parameterType="MemberDto">
+		UPDATE kbm_member SET token_id = #{tokenId}, token_date = NOW() WHERE sn = #{sn}
+	</update>
+</mapper>

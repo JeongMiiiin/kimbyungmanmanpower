@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CommonDto">
+	<resultMap id="AppealMap" type="AppealDto">
+		<id property="memberSn" column="member_sn"/> 
+		<id property="createDateStr" column="create_date_str"/>
+	</resultMap>
+	<resultMap id="ApplyMap" type="ApplyDto">
+		<id property="memberSn" column="member_sn"/>
+		<id property="memberName" column="name"/>
+		<id property="workSn" column="work_sn"/> 
+		<id property="createDateStr" column="create_date_str"/>
+		<id property="appealContents" column="appeal_contents"/>
+	</resultMap>
+	<resultMap id="MemberMap" type="MemberDto">
+		<id property="noticeAgree" column="notice_agree"/>
+		<id property="isApproved" column="is_approved"/>
+		<id property="bankName" column="bank_name"/>
+		<id property="bankNum" column="bank_num"/>
+		<id property="carExist" column="car_exist"/>
+		<id property="zipCode" column="zip_code"/>
+		<id property="etcFileSeq" column="etc_file_seq"/>
+		<id property="signFileSeq" column="sign_file_seq"/>
+		<id property="permissionFileSeq" column="permission_file_seq"/>
+		<id property="healthCertificateFileSeq" column="health_certificate_file_seq"/>
+		<id property="completeFileSeq" column="complete_file_seq"/>
+		<id property="bloodPressure" column="blood_pressure"/>
+		<id property="simpleAdvantages" column="simple_advantages"/>
+		<id property="createDateStr" column="create_date_str"/>
+		<id property="birthStr" column="birth_date_str"/>
+		<id property="managerName" column="manager_name"/>
+		<id property="representativeName" column="representative_name"/>
+		<id property="businessNum" column="business_num"/>
+		<id property="tokenId" column="token_id"/>
+	</resultMap>
+	<resultMap id="BannerMap" type="BannerDto">
+		<id property="imgFileSeq" column="file_seq"/>
+		<id property="createDateStr" column="create_date_str"/>
+		<id property="updateDateStr" column="update_date_str"/>
+	</resultMap>
+	<resultMap id="CategoryMap" type="CategoryDto">
+		<id property="createDateStr" column="create_date_str"/>
+	</resultMap>
+	<resultMap id="ChattingMap" type="ChattingDto">
+		<id property="user1Sn" column="user1_sn"/>
+		<id property="user1Name" column="user1_name"/>
+		<id property="user2Sn" column="user2_sn"/>
+		<id property="user2Name" column="user2_name"/>
+		<id property="fileSeq" column="file_seq"/>
+		<id property="fileName" column="file_name"/>
+		<id property="recentMsg" column="recent_msg"/>
+		<id property="recentMsgSn" column="recent_msg_sn"/>
+		<id property="user1OutDateStr" column="user1_out_date_str"/>
+		<id property="user2OutDateStr" column="user2_out_date_str"/>
+		<id property="createDateStr" column="create_date_str"/>
+		<id property="recentMsgDateStr" column="recent_msg_date_str"/>
+	</resultMap>
+	<resultMap id="NoticeMap" type="NoticeDto">
+		<id property="isNotice" column="is_notice"/>
+		<id property="createDateStr" column="create_date_str"/>
+		<id property="updateDateStr" column="update_date_str"/>
+	</resultMap>
+	<resultMap id="DealMap" type="DealDto">
+		<id property="memberSn" column="member_sn"/>
+		<id property="memberName" column="member_name"/>
+		<id property="recipientSn" column="recipient_sn"/>
+		<id property="recipientName" column="recipient_name"/>
+		<id property="workSn" column="work_sn"/>
+		<id property="workTitle" column="work_title"/>
+		<id property="impUid" column="imp_uid"/>
+		<id property="merchantUid" column="merchant_uid"/>
+		<id property="paymentDateStr" column="payment_date_str"/>
+		<id property="createDateStr" column="create_date_str"/>
+	</resultMap>
+	<resultMap id="DeclarationMap" type="DeclarationDto">
+		<id property="workSn" column="work_sn"/>
+		<id property="workTitle" column="work_title"/>
+		<id property="memberSn" column="member_sn"/>
+		<id property="memberName" column="member_name"/>
+		<id property="recipientSn" column="recipient_sn"/>
+		<id property="recipientName" column="recipient_name"/>
+		<id property="createDateStr" column="create_date_str"/>
+		<id property="deleteDateStr" column="delete_date_str"/>
+	</resultMap>
+	<resultMap id="WorkMap" type="WorkDto">
+		<id property="memberSn" column="member_sn"/>
+		<id property="memberName" column="member_name"/>
+		<id property="memCategory" column="mem_category"/>
+		<id property="classType" column="class_type"/>
+		<id property="memName" column="mem_name"/>
+		<id property="memPhoneNum" column="mem_phone_num"/>
+		<id property="startDateStr" column="start_date_str"/>
+		<id property="endDateStr" column="end_date_str"/>
+		<id property="startTime" column="start_time"/>
+		<id property="endTime" column="end_time"/>
+		<id property="createDateStr" column="create_date_str"/>
+		<id property="updateDateStr" column="update_date_str"/>
+		<id property="updateDateStr" column="update_date_str"/>
+		<id property="buyerEmail" column="buyer_email"/>
+		<id property="buyerAddr" column="buyer_addr"/>
+		<id property="buyerZipCode" column="buyer_zip_code"/>
+		<id property="tempMerchantUid" column="temp_merchant_uid"/>
+		<id property="tempApplySn" column="temp_apply_sn"/>
+		<id property="tempRecipientSn" column="temp_recipient_sn"/>
+	</resultMap>
+</mapper>

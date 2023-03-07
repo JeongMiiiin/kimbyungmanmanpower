@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="declaration">
+	
+	<sql id="whereParam">
+		<if test="searchWorkTitle != null and searchWorkTitle != ''">
+			 <![CDATA[ 
+			 AND 
+				gb1.title like concat('%',#{searchWorkTitle},'%') 
+			 ]]> 
+		</if>
+		<if test="searchMemberName != null and searchMemberName != ''">
+			 <![CDATA[ 
+			 AND 
+				gb2.name like concat('%',#{searchMemberName},'%') 
+			 ]]> 
+		</if>
+		<if test="searchRecipientName != null and searchRecipientName != ''">
+			 <![CDATA[ 
+			 AND 
+				gb3.name like concat('%',#{searchRecipientName},'%') 
+			 ]]> 
+		</if>
+		<if test="searchStatus != null and searchStatus != '' and searchStatus != -1">
+			 AND gb.status = #{searchStatus} 
+		</if>
+	</sql>
+	
+	<select id="selectAdmListData" parameterType="DeclarationDto" resultMap="CommonDto.DeclarationMap">
+		SELECT gb.sn, gb.work_sn, gb.category, DATE_FORMAT(gb.create_date, '%Y-%m-%d') as create_date_str, gb.status, gb.recipient_sn, gb1.title AS work_title, gb2.name AS member_name , gb3.name AS recipient_name FROM kbm_declaration gb LEFT JOIN kbm_work gb1 ON gb.work_sn = gb1.sn LEFT JOIN kbm_member gb2 ON gb.member_sn = gb2.sn LEFT JOIN kbm_member gb3 ON gb.recipient_sn = gb3.sn WHERE 1=1 <include refid="whereParam"/>
+		ORDER BY gb.sn DESC, gb.create_date DESC
+	</select>
+	
+	<select id="selectAdmTotalCnt" parameterType="DeclarationDto" resultType="int">
+		SELECT COUNT(*) FROM kbm_declaration gb LEFT JOIN kbm_work gb1 ON gb.work_sn = gb1.sn LEFT JOIN kbm_member gb2 ON gb.member_sn = gb2.sn LEFT JOIN kbm_member gb3 ON gb.recipient_sn = gb3.sn WHERE 1=1 <include refid="whereParam"/>
+	</select>
+	
+	<update id="updateStatus" parameterType="HashMap">
+		UPDATE kbm_declaration SET status = #{status} WHERE sn = #{sn}
+	</update>
+
+	<insert id="insertData" parameterType="HashMap">
+		INSERT INTO kbm_declaration (member_sn, recipient_sn, work_sn, category) VALUE (#{memberSn}, #{recipientSn}, #{workSn}, #{category})
+	</insert>
+	<select id="selectData" parameterType="HashMap" resultType="int">
+		SELECT sn FROM kbm_declaration WHERE work_sn = #{workSn} AND recipient_sn = #{memberSn} AND status = 0
+	</select>
+	<update id="cancelData" parameterType="HashMap">
+		UPDATE kbm_declaration SET status = 4, delete_date = NOW() WHERE sn = #{sn} 
+	</update>
+</mapper>

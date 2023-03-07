@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="favorite">
+	
+	<insert id="insertFavorite" parameterType="HashMap">
+		 INSERT INTO kbm_favorite (member_sn, work_sn) VALUE (#{memberSn}, #{workSn})
+	</insert>
+	
+	<delete id="deleteFavorite" parameterType="HashMap">
+		 DELETE FROM kbm_favorite WHERE member_sn = #{memberSn} AND work_sn = #{workSn}
+	</delete>
+	
+	<select id="getFavoriteList" parameterType="int" resultType="HashMap">
+		SELECT work_sn FROM kbm_favorite WHERE member_sn = #{memberSn}
+	</select>
+</mapper>

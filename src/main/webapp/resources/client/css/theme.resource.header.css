@@ -1,0 +1,59 @@
+/*
+Date : 08/08/2022
+Writer : JM
+E-mail : k3371548@gmail.com
+purpose : �궗�슜�옄�럹�씠吏� 怨듯넻 �뿤�뜑 CSS 
+*/
+
+@charset "UTF-8";
+
+/* �뿤�뜑 */
+.header_wrap{background-color: #00539C; padding: 19px 20px;}
+.header_wrap > .header_title{font-size: 18px; font-size: 1.8rem; line-height: 24px; line-height: 2.4rem; font-weight: 500; letter-spacing: -0.02em; color: #fff;}
+.header_wrap > .header_x_icon{display: inline-block; width: 18px; height: 18px; position: absolute; top: 20px; left: 20px; background-image: url('../img/18x18_ffffff_x_icon.png'); background-repeat: no-repeat; background-size: cover; background-position: center center; font-size: 0; line-height: 0;}
+.header_wrap > .header_arrow_icon{display: inline-block; width: 10px; height: 19px; position: absolute; top: 20px; left: 20px; background-image: url('../img/10x19_left_ffffff_arrow.png'); background-repeat: no-repeat; background-size: cover; background-position: center center; font-size: 0; line-height: 0;}
+
+.header_wrap.chatting{position: fixed; top: 0; left: 0; z-index: 2;}
+.header_wrap > .chatting_exit_icon{display: inline-block; width: 18px; height: 18px; position: absolute; top: 20px; right: 20px; background-image: url('../img/chatting_exit_icon.png'); background-repeat: no-repeat; background-size: cover; background-position: center center; font-size: 0; line-height: 0;}
+
+
+/* 硫붿씤 �뿤�뜑 */
+.main_header_wrap{padding: 19px 20px;}
+.main_header_wrap > .header_main_logo_con{position: absolute; top: calc(50% - 16px); left: calc(50% - 23px); display: inline-block;}
+.main_header_wrap > .header_main_logo_con > img{width:47px;}
+.main_header_wrap > .info_list_con{display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;}
+.main_header_wrap > .info_list_con > li > a{display: inline-block; font-size: 0; line-height: 0; text-align: center;}
+.main_header_wrap > .info_list_con > li > a > span{display: inline-block; margin-top: 3px; font-size: 12px; font-size: 1.2rem; line-height: 18px; line-height: 1.8rem; font-weight: 500; letter-spacing: -0.0em; color: #191919;}
+
+
+.header_pc_wrap{display: none;}
+
+@media all and (min-width: 992px){
+	.header_wrap{display: none;}
+	.main_header_wrap{display: none;}
+	.header_wrap.chatting{display: block;}
+	.header_pc_wrap{display: flex; border-bottom: 1px solid #E7E8EA; padding: 20px 30px; justify-content: center;}
+	.header_pc_con{overflow: visible; display: flex; justify-content: space-between; max-width: 1640px;}
+	.header_pc_con .left_box{display: flex; align-items: center;}
+	.header_pc_con .left_box .logo_box{width: 116px;}
+	.header_pc_con .menu_list{font-size: 0; line-height: 0; padding-left: 70px;}
+	.header_pc_con .menu_list > li{display: inline-block; padding-right: 40px;}
+	.header_pc_con .menu_list > li:last-child{padding-right: 0;}
+	.header_pc_con .menu_list > li > a{display: inline-block; position: relative;}
+	.header_pc_con .menu_list > li.active > a::after{content: ''; position: absolute; bottom: -44px; left: 0; width: 100%; background-color: #02559D; height: 3px; z-index: 3;}
+	.header_pc_con .menu_list > li > a > span{font-size: 17px; font-size: 1.7rem; line-height: 23px; line-height: 2.3rem; font-weight: 700; letter-spacing: -0.0em; color: #141414;}
+	.header_pc_con .right_box{display: flex; align-items: center;}
+	.header_pc_con .header_pc_lock_icon{display: inline-block; font-size: 0; line-height: 0; width: 20px; height: 25px; background-image: url('../img/header_pc_lock_icon.png'); background-repeat: no-repeat; background-size: cover; background-position: center center;}
+	.header_pc_con .header_pc_list{padding-bottom: 10px; margin-top: 10px; position: relative; font-size: 0; line-height: 0; margin-left: 30px;}
+	.header_pc_con .header_pc_list > a{text-align: center; overflow: hidden; width: 100px; border-radius: 25px; background-color: #000; padding: 10px; box-sizing: border-box; display: inline-block;}
+	.header_pc_con .header_pc_list > a > span{font-size: 14px; font-size: 1.4rem; line-height: 20px; line-height: 2.0rem; font-weight: 700; letter-spacing: -0.0em; color: #fff;}
+	.header_pc_con .header_pc_list > ul{ display: none; padding: 17px 40px 27px 20px; position: absolute; bottom: 0; left: 0; transform: translateY(100%); background-color: #fff; z-index: 100; border: 1px solid #CED0D4; overflow: hidden; border-radius: 8px;}
+	.header_pc_con .header_pc_list:hover > ul {display: block;}
+	.header_pc_con .header_pc_list > ul > li{display: block; margin-top: 14px;}
+	.header_pc_con .header_pc_list > ul > li.active{display: none; margin-top: 0;}
+	.header_pc_con .header_pc_list > ul > li:first-child{margin-top: 0;}
+	.header_pc_con .header_pc_list > ul > li:first-child.active + li{margin-top: 0;}
+	.header_pc_con .header_pc_list > ul > li > a{display: block;}
+	.header_pc_con .header_pc_list > ul > li > a > span{font-size: 14px; font-size: 1.4rem; line-height: 20px; line-height: 2.0rem; font-weight: 500; letter-spacing: -0.0em; color: #191919; white-space: nowrap;}
+}
+

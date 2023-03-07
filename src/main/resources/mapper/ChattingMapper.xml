@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chatting">
+
+	<select id="selectListData" parameterType="int" resultMap="CommonDto.ChattingMap">
+		SELECT *, DATE_FORMAT(recent_msg_date, '%Y.%m.%d') AS recent_msg_date_str, DATE_FORMAT(create_date, '%Y.%m.%d') AS create_date_str FROM kbm_chat WHERE delete_date IS NULL AND ((user1_sn = #{memberSn} AND user1_out_date IS NULL) OR (user2_sn = #{memberSn} AND user2_out_date IS NULL))
+	</select>
+		
+	<insert id="insertData" parameterType="ChattingDto" useGeneratedKeys="true" keyProperty="sn">
+		INSERT INTO kbm_chat (user1_sn, user1_name, user2_sn, user2_name, file_seq) VALUE (#{user1Sn},#{user1Name},#{user2Sn},#{user2Name}, #{fileSeq})
+	</insert>
+	
+	<select id="viewData" parameterType="int" resultMap="CommonDto.ChattingMap">
+		SELECT sn, user1_sn, user1_name, user2_sn, user2_name, file_seq, file_name, DATE_FORMAT(create_date, '%Y-%m-%d') AS create_date_str, DATE_FORMAT(user1_out_date, '%Y-%m-%d') AS user1_out_date_str, DATE_FORMAT(user2_out_date, '%Y-%m-%d') AS user2_out_date_str FROM kbm_chat WHERE sn = #{ChatSn} 
+	</select>
+	
+	<select id="checkData" parameterType="ChattingDto" resultType="HashMap">
+		SELECT sn FROM kbm_chat WHERE (user1_sn = #{user1Sn} AND user2_sn = #{user2Sn}) OR (user2_sn = #{user1Sn} AND user1_sn = #{user2Sn}) AND delete_date IS NULL
+	</select>
+	
+	<update id="updateRecentMsg" parameterType="HashMap">
+		UPDATE kbm_chat SET
+		recent_msg = #{msg},
+		recent_msg_sn = #{userSn},
+		recent_msg_date = NOW()
+		WHERE sn = #{sn}
+	</update>
+	
+	<select id="checkUserSn" parameterType="HashMap" resultType="int">
+		SELECT COUNT(*) FROM kbm_chat WHERE sn = #{chatSn} AND user1_sn = #{userSn} AND delete_date IS NULL
+	</select>
+	
+	<update id="exitChat" parameterType="HashMap">
+		UPDATE kbm_chat SET
+		<if test="user1Sn != null">
+		user1_out_date = NOW()
+		</if>
+		<if test="user2Sn != null">
+		user2_out_date = NOW()
+		</if>
+		WHERE sn = #{chatSn}
+	</update>
+	
+	<select id="getUserSn" parameterType="int" resultType="HashMap">
+		SELECT user1_sn, user2_sn FROM kbm_chat WHERE delete_date IS NULL AND sn = #{ChatSn}
+	</select>
+	
+</mapper>

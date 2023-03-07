@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="work">
+	
+	<sql id="whereParam">
+		<if test="searchTitle != null and searchTitle != ''">
+			 <![CDATA[ 
+			 AND 
+				gb.title like concat('%',#{searchTitle},'%') 
+			 ]]> 
+		</if>
+		<if test="searchMemCategory != null and searchMemCategory != -1">
+			 AND gb.mem_category = #{searchMemCategory} 
+		</if>
+		<if test="searchClassType != null and searchClassType != -1">
+			 AND gb.class_type = #{searchClassType} 
+		</if>
+		<if test="searchStartDate != null and searchStartDate != ''">
+			<![CDATA[ 
+			 AND 
+				gb.start_date >= #{searchStartDate} 
+			 ]]> 
+		</if>
+		<if test="searchEndDate != null and searchEndDate != ''">
+			<![CDATA[ 
+			 AND 
+				gb.end_date <= #{searchEndDate} 
+			 ]]> 
+		</if>
+	</sql>
+	
+	<select id="selectAdmListData" parameterType="WorkDto" resultMap="CommonDto.WorkMap">
+		SELECT gb.*, DATE_FORMAT(gb.create_date, '%Y-%m-%d') AS create_date_str, DATE_FORMAT(gb.start_date, '%Y-%m-%d') AS start_date_str, TIME_FORMAT(gb.start_date, '%H:%i') AS start_time, DATE_FORMAT(gb.end_date, '%Y-%m-%d') AS end_date_str, TIME_FORMAT(gb.end_date, '%H:%i') AS end_time, gb1.name AS member_name FROM kbm_work gb LEFT JOIN kbm_member gb1 ON gb.member_sn = gb1.sn WHERE gb.delete_date IS NULL <include refid="whereParam"/>
+		ORDER BY gb.sn DESC, gb.create_date DESC
+	</select>
+	
+	<select id="selectAdmTotalCnt" parameterType="WorkDto" resultType="int">
+		SELECT COUNT(*) FROM kbm_work gb WHERE delete_date IS NULL <include refid="whereParam"/>
+	</select>
+	
+	<select id="selectAdmViewData" parameterType="int" resultMap="CommonDto.WorkMap">
+		SELECT gb.*, DATE_FORMAT(gb.create_date, '%Y-%m-%d') as create_date_str, DATE_FORMAT(gb.start_date, '%Y-%m-%d') AS start_date_str, TIME_FORMAT(gb.start_date, '%H:%i') AS start_time, DATE_FORMAT(gb.end_date, '%Y-%m-%d') AS end_date_str, TIME_FORMAT(gb.end_date, '%H:%i') AS end_time, CONCAT(mem_phone0,"-",mem_phone1,"-",mem_phone2) AS mem_phone_num FROM kbm_work gb WHERE gb.sn = #{sn} AND gb.delete_date IS NULL
+	</select>
+	
+	<update id="deleteAdmData" parameterType="int">
+		UPDATE kbm_work SET delete_date = NOW() WHERE sn = #{sn}
+	</update>
+	
+	<select id="selectListData" parameterType="WorkDto" resultMap="CommonDto.WorkMap">
+		SELECT sn, member_sn, title, mem_category, class_type, sex, category, region, numbers, DATE_FORMAT(start_date, '%Y-%m-%d') AS start_date_str, DATE_FORMAT(end_date, '%Y-%m-%d') AS end_date_str, payment, contents, mem_name, CONCAT(mem_phone0,"-",mem_phone1,"-",mem_phone2) AS mem_phone_num, password, hits, DATE_FORMAT(create_date, '%Y.%m.%d') AS create_date_str
+		FROM kbm_work WHERE delete_date IS NULL AND member_sn = #{memberSn} AND start_date >= NOW()
+	</select>
+	
+	<insert id="insertData" parameterType="HashMap">
+		INSERT INTO kbm_work (title, sex, category, region, start_date, end_date, payment, contents, class_type, mem_category, member_sn
+		<if test="numbers != null and numbers != ''">
+			,numbers
+		</if>
+		<if test="password != null and password != ''">
+			,password
+		</if>
+		<if test="memName != null and memName != ''">
+			,mem_name
+		</if>
+		<if test="phone0 != null and phone0 != ''">
+			,mem_phone0
+		</if>
+		<if test="phone1 != null and phone1 != ''">
+			,mem_phone1
+		</if>
+		<if test="phone2 != null and phone2 != ''">
+			,mem_phone2
+		</if>
+		)
+		VALUE (#{title}, #{sex}, #{category}, #{region}, #{startDate}, #{endDate}, #{payment}, #{contents}, #{classType}, #{memCategory}, #{memberSn}
+		<if test="numbers != null and numbers != ''">
+			,#{numbers}
+		</if>
+		<if test="password != null and password != ''">
+			,#{password}
+		</if>
+		<if test="memName != null and memName != ''">
+			,#{memName}
+		</if>
+		<if test="phone0 != null and phone0 != ''">
+			,#{phone0}
+		</if>
+		<if test="phone1 != null and phone1 != ''">
+			,#{phone1}
+		</if>
+		<if test="phone2 != null and phone2 != ''">
+			,#{phone2}
+		</if>
+		)
+	</insert>
+	
+	<update id="updateData" parameterType="HashMap">
+		UPDATE kbm_work SET
+		title = #{title}
+		,category = #{category}
+		,region = #{region}
+		,start_date = #{startDate}
+		,end_date = #{endDate}
+		,payment = #{payment}
+		,contents = #{contents}
+		<if test="sex != null and sex != ''">
+		 ,sex = #{sex}
+		</if>
+		<if test="numbers != null and numbers != ''">
+		 ,numbers = #{numbers}
+		</if>
+		<if test="password != null and password != ''">
+		 ,password = #{password}
+		</if>
+		WHERE sn = #{sn} 
+	</update>
+	
+	<update id="deleteData" parameterType="HashMap">
+		UPDATE kbm_work SET delete_date = NOW() WHERE sn = #{sn}
+	</update>
+	
+	<select id="searchData" parameterType="HashMap" resultType="HashMap">
+		SELECT sn, title, class_type, sex, category, region, numbers, DATE_FORMAT(start_date, '%Y-%m-%d') AS start_date_str, DATE_FORMAT(end_date, '%Y-%m-%d') AS end_date_str, payment, contents FROM kbm_work WHERE delete_date IS NULL
+			AND mem_category IN (#{filterMemCategory})
+		<if test="filterClass != null and filterClass.size() != 0">
+			AND class_type IN
+				<foreach collection="filterClass" item="item" separator="," open="(" close=")">
+					#{item.value}
+				</foreach>
+		</if>
+		<if test="filterSex != null and filterSex.size() != 0">
+			AND sex IN
+			<foreach collection="filterSex" item="item" separator="," open="(" close=")">
+				#{item.value}
+			</foreach>
+		</if>
+		<if test="filterRegion != null and filterRegion.size() != 0">
+			AND 
+			<foreach collection="filterRegion" item="item" separator="OR" open="(" close=")">
+				<![CDATA[
+				region LIKE CONCAT('%',#{item},'%')
+				]]>
+			</foreach>
+		</if>
+		<if test="filterCategory != null and filterCategory.size() != 0">
+			AND 
+			<foreach collection="filterCategory" item="item" separator="OR" open="(" close=")">
+				<![CDATA[
+				category LIKE CONCAT('%',#{item},'%')
+				]]>
+			</foreach>
+		</if>
+		<if test="filterStartDate != null and filterStartDate != ''">
+			<![CDATA[
+			AND start_date >= #{filterStartDate}
+			]]>
+		</if>
+		<if test="filterEndDate != null and filterEndDate != ''">
+			<![CDATA[
+			AND end_date <= #{filterEndDate}
+			]]>
+		</if>
+		<if test="filterStartPayment != null and filterStartPayment != ''">
+			<![CDATA[
+			AND payment >= #{filterStartPayment}
+			]]>
+		</if>
+		<if test="filterStartPayment != null and filterStartPayment != ''">
+			<![CDATA[
+			AND payment >= #{filterStartPayment}
+			]]>
+		</if>
+		<if test="filterEndPayment != null and filterEndPayment != ''">
+			<![CDATA[
+			AND payment <= #{filterEndPayment}
+			]]>
+		</if>
+		ORDER BY start_date DESC, sn DESC
+	</select>
+	
+	<select id="viewPopupData" parameterType="HashMap" resultType="HashMap">
+		SELECT sn, title, class_type, sex, category, region, numbers, DATE_FORMAT(start_date, '%Y.%m.%d') AS start_date_str, TIME_FORMAT(start_date, '%H:%i') AS start_time, DATE_FORMAT(end_date, '%Y.%m.%d') AS end_date_str, TIME_FORMAT(end_date, '%H:%i') AS end_time, payment, contents, status, member_sn, password, mem_name, numbers
+		FROM kbm_work WHERE sn = #{workSn}
+	</select>
+	
+	<select id="viewData" parameterType="int" resultMap="CommonDto.WorkMap">
+		SELECT kw.sn, kw.title, kw.class_type, kw.sex, kw.category, kw.region, kw.numbers, DATE_FORMAT(kw.start_date, '%Y.%m.%d') AS start_date_str, TIME_FORMAT(kw.start_date, '%H:%i') AS start_time, DATE_FORMAT(kw.end_date, '%Y.%m.%d') AS end_date_str, TIME_FORMAT(kw.end_date, '%H:%i') AS end_time, kw.payment, kw.contents, kw.status, kw.member_sn, kw.password, kw.numbers, km.name AS mem_name, CONCAT(km.phone0,'-',km.phone1,'-',km.phone2) AS mem_phone_num, CONCAT(km.email0, '@', km.email1) AS buyer_email, CONCAT(km.address0, ' ', km.address0) AS buyer_addr, km.zip_code AS buyer_zip_code
+		FROM kbm_work kw LEFT JOIN kbm_member km ON kw.member_sn = km.sn WHERE kw.sn = #{sn}
+	</select>
+	
+	<select id="favoriteData" parameterType="java.util.List" resultType="HashMap">
+		SELECT sn, title, class_type, sex, category, region, numbers, DATE_FORMAT(start_date, '%Y-%m-%d') AS start_date_str, DATE_FORMAT(end_date, '%Y-%m-%d') AS end_date_str, payment, contents FROM kbm_work WHERE delete_date IS NULL
+		<choose>
+			<when test="list !=null and list.size != 0">
+				<foreach collection="list" item="item" open="AND sn IN (" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				AND sn = -1
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="completeMyInfoData" parameterType="int" resultMap="CommonDto.WorkMap">
+		SELECT sn, title, payment FROM kbm_work WHERE sn = #{sn}
+	</select>
+	
+	<update id="changeWorkStatus" parameterType="HashMap">
+		UPDATE kbm_work SET status = #{status} WHERE sn = #{workSn}
+	</update>
+	
+	<select id="getMemberSn" parameterType="int" resultType="HashMap">
+		SELECT member_sn FROM kbm_work WHERE sn = #{workSn}
+	</select>
+	
+	<select id="getDataForApp" parameterType="String" resultMap="CommonDto.WorkMap">
+		SELECT sn, member_sn, payment, temp_apply_sn, temp_recipient_sn FROM kbm_work WHERE temp_merchant_uid = #{merchantUid}
+	</select>
+	
+	<update id="updateTempMerchant" parameterType="HashMap">
+		UPDATE kbm_work SET
+			temp_merchant_uid = #{merchantUid},
+			temp_apply_sn = #{applySn},
+			temp_recipient_sn = #{recipientSn}
+			WHERE sn = #{workSn}
+	</update>
+	
+</mapper>

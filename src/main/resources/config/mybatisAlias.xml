@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.AppealDto" alias="AppealDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.ApplyDto" alias="ApplyDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.MemberDto" alias="MemberDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.BannerDto" alias="BannerDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.CategoryDto" alias="CategoryDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.ChattingDto" alias="ChattingDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.NoticeDto" alias="NoticeDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.DealDto" alias="DealDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.DeclarationDto" alias="DeclarationDto"/>
+		<typeAlias type="com.kimbyungman.spring.manpower.dto.WorkDto" alias="WorkDto"/>
+	</typeAliases>
+</configuration>

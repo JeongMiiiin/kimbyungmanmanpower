@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="banner">
+
+	<sql id="whereParam">
+		<if test="searchTitle != null and searchTitle != ''">
+			 <![CDATA[ 
+			 AND 
+				gb.title like concat('%',#{searchTitle},'%') 
+			 ]]> 
+		</if>
+		<if test="searchCategory != null and searchCategory != '' and searchCategory != -1">
+			 AND gb.category = #{searchCategory} 
+		</if>
+	</sql>
+	
+	<select id="getList" parameterType="int" resultMap="CommonDto.BannerMap">
+		SELECT sn, category, link, file_seq FROM kbm_banner WHERE delete_date IS NULL AND category = #{categoryNum}
+		ORDER BY sn DESC, create_date DESC
+	</select>
+	
+	<select id="selectAdmListData" parameterType="BannerDto" resultMap="CommonDto.BannerMap">
+		SELECT gb.sn, gb.title, gb.category, DATE_FORMAT(gb.create_date, '%Y-%m-%d') as create_date_str FROM kbm_banner gb WHERE gb.delete_date IS NULL <include refid="whereParam"/>
+		ORDER BY gb.sn DESC, gb.create_date DESC
+	</select>
+	
+	<select id="selectAdmTotalCnt" parameterType="BannerDto" resultType="int">
+		SELECT COUNT(*) FROM kbm_banner gb WHERE delete_date IS NULL <include refid="whereParam"/>
+	</select>
+	
+	<insert id="insertAdmData" parameterType="BannerDto">
+		INSERT INTO kbm_banner (title, category, link, file_seq) VALUE (#{title}, #{category}, #{link}, #{imgFileSeq})
+	</insert>
+	
+	<select id="selectAdmViewData" parameterType="int" resultMap="CommonDto.BannerMap">
+		SELECT sn, title, category, link, file_seq, DATE_FORMAT(create_date, '%Y-%m-%d') as create_date_str FROM kbm_banner WHERE sn = #{sn} AND delete_date IS NULL
+	</select>
+	
+	<update id="updateAdmData" parameterType="BannerDto">
+		UPDATE kbm_banner SET
+		title = #{title},
+		category = #{category},
+		link = #{link},
+		file_seq = #{imgFileSeq},
+		update_date = NOW()
+		WHERE sn = #{sn}
+	</update>
+	
+	<update id="deleteAdmData" parameterType="int">
+		UPDATE kbm_banner SET delete_date = NOW() WHERE sn = #{sn}
+	</update>
+	
+</mapper>

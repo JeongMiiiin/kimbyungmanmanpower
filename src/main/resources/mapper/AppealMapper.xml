@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="appeal">
+	
+	<!-- 데이터 리스트 조회 -->
+	<select id="selectListData" parameterType="int" resultMap="CommonDto.AppealMap">
+		SELECT sn, member_sn, title, contents, DATE_FORMAT(create_date, '%Y.%m.%d') as create_date_str FROM kbm_member_appeal WHERE member_sn = #{memberSn} AND delete_date IS NULL ORDER BY sn DESC, create_date DESC
+	</select>
+	
+	<!-- 데이터 추가 -->
+	<insert id="insertData" parameterType="HashMap">
+		INSERT INTO kbm_member_appeal (member_sn, title, contents) VALUE (#{memberSn}, #{title}, #{contents})
+	</insert>
+	
+	<!-- 업데이트 -->
+	<update id="updateData" parameterType="HashMap">
+		UPDATE kbm_member_appeal SET
+		title = #{title},
+		contents = #{contents},
+		update_date = NOW()
+		WHERE sn = #{sn}
+	</update>
+	
+	<!-- 데이터 논리 제거 -->
+	<update id="deleteData" parameterType="HashMap">
+		UPDATE kbm_member_appeal SET
+		delete_date = NOW()
+		WHERE sn = #{sn}
+	</update>
+	
+</mapper>

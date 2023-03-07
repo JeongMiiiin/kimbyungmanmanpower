@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="apply">
+	<sql id="whereParam">
+		<if test="memberSn != null and memberSn != 0">
+			 AND gb.member_sn = #{memberSn}
+		</if>
+		<if test="workSn != null and workSn != 0">
+			 AND gb.work_sn = #{workSn}
+		</if>
+	</sql>
+	
+	<!-- 데이터 리스트 조회 -->
+	<select id="selectListData" parameterType="ApplyDto" resultMap="CommonDto.ApplyMap">
+		SELECT gb.sn, gb.member_sn, gb.work_sn, gb.status, DATE_FORMAT(gb.create_date, '%Y-%m-%d') AS create_date_str, gb.appeal_contents, gb2.name FROM kbm_apply gb LEFT JOIN kbm_member gb2 ON gb.member_sn = gb2.sn WHERE 1=1 <include refid="whereParam"/>
+	</select>
+	
+	<!-- 데이터 추가 -->
+	<insert id="insertData" parameterType="HashMap">
+		INSERT INTO kbm_apply (member_sn, work_sn, appeal_contents) VALUE (#{memberSn}, #{workSn}, #{appealContents})
+	</insert>
+	
+	<!-- 중복체크 -->
+	<select id="checkDuplicate" parameterType="HashMap" resultType="int">
+		SELECT COUNT(*) FROM kbm_apply WHERE work_sn = #{workSn} AND member_sn = #{memberSn}
+	</select>
+	
+	<!-- 상태변경 -->
+	<update id="changeApplyStatus" parameterType="HashMap">
+		UPDATE kbm_apply SET status = #{status} WHERE sn = #{applySn} 
+	</update>
+</mapper>

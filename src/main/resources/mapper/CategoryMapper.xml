@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 
+3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="category">
+
+	<sql id="whereParam">
+		<if test="searchName != null and searchName != ''">
+			 <![CDATA[ 
+			 AND 
+				gb.title like concat('%',#{searchName},'%') 
+			 ]]> 
+		</if>
+		<if test="searchStatus != null and searchStatus != '' and searchStatus != -1">
+			 AND gb.status = #{searchStatus} 
+		</if>
+	</sql>
+	
+	<select id="getCategory" resultType="HashMap">
+		SELECT sn, title FROM kbm_category WHERE delete_date IS NULL AND status = 0
+		ORDER BY sn DESC, create_date DESC
+	</select>
+	
+	<select id="selectAdmListData" parameterType="CategoryDto" resultMap="CommonDto.CategoryMap">
+		SELECT gb.sn, gb.title, gb.status, DATE_FORMAT(gb.create_date, '%Y-%m-%d') as create_date_str FROM kbm_category gb WHERE delete_date IS NULL <include refid="whereParam"/>
+		ORDER BY gb.sn DESC, gb.create_date DESC
+	</select>
+	
+	<select id="selectAdmTotalCnt" parameterType="CategoryDto" resultType="int">
+		SELECT COUNT(*) FROM kbm_category gb WHERE delete_date IS NULL <include refid="whereParam"/>
+	</select>
+	
+	<insert id="insertAdmData" parameterType="CategoryDto">
+		INSERT INTO kbm_category (title, status) VALUE (#{title}, #{status})
+	</insert>
+	
+	<update id="updateAdmData" parameterType="CategoryDto">
+		UPDATE kbm_category SET
+		title = #{title},
+		status = #{status}
+		update_date = NOW()
+		WHERE sn = #{sn}
+	</update>
+	
+	<update id="deleteAdmData" parameterType="int">
+		UPDATE kbm_category SET delete_date = NOW() WHERE sn = #{sn}
+	</update>
+	
+	<update id="updateAdmStatus" parameterType="HashMap">
+		UPDATE kbm_category SET status = #{status} WHERE sn = #{sn}
+	</update>
+	
+</mapper>
